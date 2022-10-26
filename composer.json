@@ -1,0 +1,30 @@
+{
+    "name": "coyote6/laravel-crud",
+    "type": "library",
+    "description": "Base templates utilizing Livewire and Tailwind for Creating, Retrieving, Updating, and Deleting (CRUD) data for administering your Laravel site.",
+    "keywords": ["laravel","forms","crud","resource-management"],
+    "homepage": "https://coyote6.com",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Tanner Naeher",
+            "email": "tanner@coyote6.com",
+            "homepage": "https://coyote6.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+    },
+    "autoload": {
+        "psr-4": {
+            "Coyote6\\LaravelCrud\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Coyote6\\LaravelCrud\\CrudServiceProvider"
+            ]
+        },
+    }
+}
