@@ -14,6 +14,8 @@
         }
     ],
     "require": {
+	    "coyote6/laravel-base" : "^0.0",
+	    "coyote6/laravel-forms" : "^0.0"
     },
     "autoload": {
         "psr-4": {
@@ -23,8 +25,10 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Coyote6\\LaravelCrud\\CrudServiceProvider"
+                "Coyote6\\LaravelCrud\\Providers\\CrudServiceProvider"
             ]
         },
     }
+    
+    
 }
