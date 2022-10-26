@@ -27,8 +27,7 @@
             "providers": [
                 "Coyote6\\LaravelCrud\\Providers\\CrudServiceProvider"
             ]
-        },
-    }
-    
-    
+        }
+    }   
+
 }
