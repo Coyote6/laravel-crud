@@ -58,6 +58,8 @@ abstract class Import extends Component {
 	//	Example::create ($fields);
 	// }
 	//
+	// @return null || string (Error Message)
+	//
     abstract protected function create ($fields);
 
         
@@ -139,8 +141,13 @@ abstract class Import extends Component {
 					$errors[$rows] = $validator->errors();
 				}
 				else {
-			        $this->create ($fields);
-			        $importCount++;
+			        $hasError = $this->create ($fields);
+			        if (is_string ($hasError) && $hasError != '') {
+						$errors[$rows] = $hasError;
+			        }
+			        else {
+				        $importCount++;			        
+			        }
 			    }
 		    });
 		
