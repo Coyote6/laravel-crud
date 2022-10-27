@@ -14,8 +14,8 @@
         }
     ],
     "require": {
-	    "coyote6/laravel-base" : "0.*",
-	    "coyote6/laravel-forms" : "0.*"
+	    "coyote6/laravel-base" : "*",
+	    "coyote6/laravel-forms" : "*"
     },
     "autoload": {
         "psr-4": {
