@@ -7,6 +7,7 @@ namespace Coyote6\LaravelCrud\Crud;
 
 
 use Coyote6\LaravelCrud\Traits\CrudRouteReturn;
+use Coyote6\LaravelCrud\Traits\HasPolicy;
 use Coyote6\LaravelCrud\Traits\PropertySet;
 use Coyote6\LaravelCrud\Traits\RouteParameters;
 use Coyote6\LaravelCrud\Traits\SuccessMessage;
@@ -16,6 +17,7 @@ use Coyote6\LaravelForms\Form\Form;
 use Coyote6\LaravelForms\Livewire\Component;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 
 
@@ -25,7 +27,9 @@ abstract class Delete extends Component {
 		PropertySet,
 		SuccessMessage,
 		Templates,
-		RouteParameters;
+		RouteParameters,
+		HasPolicy,
+		AuthorizesRequests;
 	
 	// Required Properties:
 	//
@@ -71,6 +75,9 @@ abstract class Delete extends Component {
 	
 	protected $defaultSuccessMessage = 'The model was successfully deleted.';
 	protected $defaultConfirmationMessage = 'Are you sure you want to delete this item?';
+	
+	protected string $submitButtonText = 'Delete';
+	protected string $cancelButtonText = 'Cancel';
 
 	
 	//
@@ -146,6 +153,14 @@ abstract class Delete extends Component {
 	protected function postDelete (&$vals) {}
 	protected function postDeleteFallback(&$vals) {}
 	
+	protected function getSubmitButtonText () {
+		return $this->submitButtonText;
+	}
+	
+	protected function getCancelButtonText () {
+		return $this->cancelButtonText;
+	}
+	
 	
 	// Override if you need to do any customizations
 	// to the model before deleting it.
@@ -188,6 +203,10 @@ abstract class Delete extends Component {
 	// during or after saving the model.
 	//
 	protected function delete (&$vals) {
+		
+		if ($this->hasPolicy ($this->model)) {
+    		$this->authorize('delete', $this->model);
+    	}
 		
 		$this->model->delete();
 		$this->emitUp ('refreshItems');
@@ -243,21 +262,21 @@ abstract class Delete extends Component {
 			}
 					
 			$form->html('cancel')
-				->content ('<a class="inline-block py-2 px-4 border rounded-md text-sm leading-5 font-medium focus:outline-none focus:border-blue-300 focus:shadow-outline-blue transition duration-150 ease-in-out field field--button form-input" ' . $closeAttr . 'href="' . $this->crudRouteUrl() . '">Cancel</a>')
+				->content ('<a class="inline-block py-2 px-4 border rounded-md text-sm leading-5 font-medium focus:outline-none focus:border-blue-300 focus:shadow-outline-blue transition duration-150 ease-in-out field field--button form-input" ' . $closeAttr . 'href="' . $this->crudRouteUrl() . '">' . $this->getCancelButtonText() . '</a>')
 				->groupWithButtons();
 				
 		}
 		// If not no link is available and not on the fallback, just set a button.
 		else if (!$this->isFallbackRoute()) {
 			$form->button ('cancel')
-				->content ('Cancel')
+				->content ($this->getCancelButtonText())
 				->addAttribute ('wire:click', '$emitUp(\'toggleDeleteModal\')')
 				->groupWithButtons();
 		}
 		
 		
-		$s = $form->submitButton ('submit');
-		$s->content = 'Delete';
+		$form->submitButton ('submit')
+			->content ($this->getSubmitButtonText());
 				
 		return $form;
 		
