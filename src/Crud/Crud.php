@@ -836,7 +836,43 @@ abstract class Crud extends Component {
 					$attrs = new ComponentAttributeBag ($column['attrs']);
 				}
 				
-			}			
+			}
+			else if (isset ($column['action'])) {
+				
+				
+				$action = $column['action'] . '()';
+				
+				
+				if (isset ($column['params'])) {
+					
+					foreach ($column['params'] as $paramKey => $string) {
+						$objs = explode ('.', $string);
+						$param = $item;
+						foreach ($objs as $objKey) {
+							if (is_null ($param->$objKey)) {
+								$param = null;
+								break;
+							}
+							$param = $param->$objKey;
+						}
+						$params[$paramKey] = $param;
+					}
+					
+					$action = $column['action'] . "('" . implode ("','", $params) . "')";
+				}
+					
+				$actionAttrs = [
+					'wire:click' => $action
+				];
+								
+				if (isset ($column['attrs'])) {
+					$actionAttrs = array_merge ($actionAttrs, $column['attrs']);
+				}
+				
+				$attrs = new ComponentAttributeBag ($actionAttrs);
+			}
+			
+					
 		}
 		
 			
@@ -850,6 +886,13 @@ abstract class Crud extends Component {
 			$text = $text->$tok;
 		}
 		
+		if (isset ($column['prefix']) && is_string ($column['prefix'])) {
+			$text = $column['prefix'] . $text;
+		}	
+		
+		if (isset ($column['suffix']) && is_string ($column['suffix'])) {
+			$text .= $column['suffix'];
+		}
 
 		return ['link' => $link, 'text' => $text, 'attrs' => $attrs];
 

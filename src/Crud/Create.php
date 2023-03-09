@@ -7,6 +7,7 @@ namespace Coyote6\LaravelCrud\Crud;
 
 
 use Coyote6\LaravelCrud\Traits\CrudRouteReturn;
+use Coyote6\LaravelCrud\Traits\HasPolicy;
 use Coyote6\LaravelCrud\Traits\PropertySet;
 use Coyote6\LaravelCrud\Traits\RouteParameters;
 use Coyote6\LaravelCrud\Traits\SuccessMessage;
@@ -26,7 +27,8 @@ abstract class Create extends Component {
 		PropertySet,
 		SuccessMessage,
 		Templates,
-		RouteParameters;
+		RouteParameters,
+		HasPolicy;
 	
 	// Required Properties:
 	//
@@ -198,7 +200,9 @@ abstract class Create extends Component {
 	// during or after saving the model.
 	//
 	protected function save (&$vals) {
-    	$this->authorize('create', $this->modelClass());
+		if ($this->hasPolicy ($this->modelClass())) {
+    		$this->authorize('create', $this->modelClass());
+    	}
 		$this->model->save();
 		$this->emitUp ('refreshItems');
 		$this->emitUp ('toggleCreateModal');

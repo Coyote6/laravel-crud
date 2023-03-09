@@ -7,6 +7,7 @@ namespace Coyote6\LaravelCrud\Crud;
 
 
 use Coyote6\LaravelCrud\Traits\CrudRouteReturn;
+use Coyote6\LaravelCrud\Traits\HasPolicy;
 use Coyote6\LaravelCrud\Traits\PropertySet;
 use Coyote6\LaravelCrud\Traits\RouteParameters;
 use Coyote6\LaravelCrud\Traits\SuccessMessage;
@@ -16,6 +17,7 @@ use Coyote6\LaravelForms\Form\Form;
 use Coyote6\LaravelForms\Livewire\Component;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 
 
@@ -25,7 +27,9 @@ abstract class Update extends Component {
 		PropertySet,
 		SuccessMessage,
 		Templates,
-		RouteParameters;
+		RouteParameters,
+		HasPolicy,
+		AuthorizesRequests;
 	
 	// Required Properties:
 	//
@@ -203,6 +207,9 @@ abstract class Update extends Component {
 	// during or after saving the model.
 	//
 	protected function save (&$vals) {
+		if ($this->hasPolicy ($this->model)) {
+    		$this->authorize('update', $this->model);
+    	}
 		$this->model->save();
 		$this->emitUp ('refreshItems');
 		$this->emitUp ('toggleEditModal');

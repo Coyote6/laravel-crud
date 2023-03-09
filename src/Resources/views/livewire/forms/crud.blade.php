@@ -35,11 +35,11 @@
 		>
 			<x-layouts.table>
 				<x-slot name="head">
-					<x-layouts.table.heading class="pr-0">
-						@if ($hasBulkActions)
+					@if ($hasBulkActions)
+						<x-layouts.table.heading class="pr-0">
 							<x-inputs.checkbox wire:model="selectPage" />
-						@endif
-					</x-layouts.table.heading>
+						</x-layouts.table.heading>
+					@endif
 					@foreach ($columns as $key => $columnInfo)
 						@php
 							$sort = $this->getColumnSort ($columnInfo, $key);
@@ -49,15 +49,15 @@
 						
 						@if ($sortable)
 							@if ($loop->last)
-								<x-layouts.table.heading class="w-full" sortable multi-column wire:click="sortBy('{{ $sort }}')" :direction="$sorts[$sort] ?? null">{{ $label }}</x-layout.table.heading>
+								<x-layouts.table.heading class="w-full text-left" sortable multi-column wire:click="sortBy('{{ $sort }}')" :direction="$sorts[$sort] ?? null">{{ $label }}</x-layout.table.heading>
 							@else
-								<x-layouts.table.heading sortable multi-column wire:click="sortBy('{{ $sort }}')" :direction="$sorts[$sort] ?? null">{{ $label }}</x-layout.table.heading>
+								<x-layouts.table.heading class="text-left" sortable multi-column wire:click="sortBy('{{ $sort }}')" :direction="$sorts[$sort] ?? null">{{ $label }}</x-layout.table.heading>
 							@endif
 						@else
 							@if ($loop->last)
-								<x-layouts.table.heading class="w-full" multi-column>{{ $label }}</x-layout.table.heading>
+								<x-layouts.table.heading class="w-full text-left" multi-column>{{ $label }}</x-layout.table.heading>
 							@else
-								<x-layouts.table.heading multi-column>{{ $label }}</x-layout.table.heading>
+								<x-layouts.table.heading class="text-left" multi-column>{{ $label }}</x-layout.table.heading>
 							@endif
 
 						@endif
@@ -91,13 +91,26 @@
 								</x-layouts.table.cell>
 							@endif
 							
-							@foreach ($columns as $key => $label)
+							@foreach ($columns as $key => $columnInfo)
 								<x-layouts.table.cell>
 									<span class="inline-flex space-x-2 truncate text-sm leading-5">
 										@if ($loop->first && $icon)
 											<x-dynamic-component :component="$icon" class="text-cool-gray-400" />
 										@endif
-										<p class="text-cool-gray-600 truncate">{!! $item->$key !!}</p>
+										@php 
+											$column = $this->getColumn ($item, $key, $columnInfo);
+										@endphp
+										<p class="text-cool-gray-600 truncate">
+											@if (!is_null ($column['link']))
+												<a {!! ($column['attrs']) ? $column['attrs'] : '' !!} href="{{ $column['link'] }}">{!! $column['text'] !!}</a>
+											@else
+												@if ($column['attrs'])
+													<span {!!  $column['attrs'] !!}>{!! $column['text'] !!}</a>
+												@else 
+													{!! $column['text'] !!}
+												@endif
+											@endif
+										</p>
 									</span>
 								</x-layouts.table.cell>
 							@endforeach
