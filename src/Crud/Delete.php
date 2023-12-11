@@ -208,11 +208,37 @@ abstract class Delete extends Component {
     		$this->authorize('delete', $this->model);
     	}
 		
+		if ($this->getRemoveDataBeforeDelete() && method_exists ($this->model, 'removeData')) {
+			$this->model->removeData();
+		}
+
+		
 		$this->model->delete();
 		$this->emitUp ('refreshItems');
 		$this->emitUp ('toggleDeleteModal');
 		$this->notifySuccess ($this->successMessage());
 
+	}
+	
+	// 
+	// @optionalParam $removeDataBeforeDelete
+	// 
+	public function getRemoveDataBeforeDelete (): bool {
+		
+		if (
+			property_exists ($this, 'removeDataBeforeDelete') && 
+			is_bool ($this->removeDataBeforeDelete)
+		) {
+			return $this->removeDataBeforeDelete;
+		}
+		
+		$config = config ('crud.remove-data-before-delete', true);
+		if (is_bool ($config)) {
+			return $config;
+		}
+		
+		return true;
+			
 	}
 	
 	

@@ -69,11 +69,48 @@ trait WithBulkActions {
 	}
 	
 	
+	// 
+	// @optionalParam $removeDataBeforeDelete
+	// 
+	public function getRemoveDataBeforeDelete (): bool {
+		
+		if (
+			property_exists ($this, 'removeDataBeforeDelete') && 
+			is_bool ($this->removeDataBeforeDelete)
+		) {
+			return $this->removeDataBeforeDelete;
+		}
+		
+		$config = config ('crud.remove-data-before-delete', true);
+		if (is_bool ($config)) {
+			return $config;
+		}
+		
+		return true;
+			
+	}
+	
 	public function deleteSelected () {
 	
-		(clone $this->query)
+		if ($this->getRemoveDataBeforeDelete()) {
+			
+			$items = (clone $this->query)
 			->unless($this->selectAll, fn ($query) => $query->whereKey ($this->selected))
-			->delete();
+			->get();
+			
+			foreach ($items as $item) {
+				if (method_exists ($item, 'removeData')) {
+					$item->removeData();
+				}
+				$item->delete();
+			}
+			
+		}
+		else {
+			(clone $this->query)
+				->unless($this->selectAll, fn ($query) => $query->whereKey ($this->selected))
+				->delete();
+		}
 		
 		$this->showDeleteSelectedModal = false;
 		$this->selected = [];

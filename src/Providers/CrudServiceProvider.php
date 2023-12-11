@@ -20,6 +20,7 @@ class CrudServiceProvider extends ServiceProvider {
 	 */
 	public function register() {
 		$this->loadViewsFrom (__DIR__ . '/../Resources/views', 'laravel-crud');
+		$this->mergeConfigFrom (__DIR__ . '/../Resources/config/crud.php', 'crud');
 	}
 
 
@@ -29,6 +30,10 @@ class CrudServiceProvider extends ServiceProvider {
 	 * @return void
 	 */
 	public function boot() {
+		
+		$this->publishes([
+			__DIR__ . '/../Resources/config/crud.php' => config_path('crud.php'),
+		], 'crud');
 
 		//
 		// Blade Components
