@@ -182,7 +182,7 @@
         @endif
         
         @if ($importForm)
-			@livewire ($importForm)
+			@livewire ($importForm, $this->routeParameters())
 		@endif
 		
 		
