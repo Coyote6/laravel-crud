@@ -594,7 +594,7 @@ abstract class Crud extends Component {
 		if (!property_exists ($this, 'updateForm')) {
 			return false;
 		}
-		return $this->importForm;
+		return $this->updateForm;
 	}
 	
 	
