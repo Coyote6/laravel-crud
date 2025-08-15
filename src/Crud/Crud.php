@@ -282,23 +282,23 @@ abstract class Crud extends Component {
 			$orPermissionIsset = isset ($op['permissions']) && $op['permissions'] != '';
 
 			if ($authorPermissionIsset && $orPermissionIsset && !is_null($item->author_id)) {
-				if (!is_null ($user) && $user->id == $item->author_id && $user->hasPermission ($op['author_permission'])) {
+				if (!is_null ($user) && $user->id == $item->author_id && $user->hasPermissionTo ($op['author_permission'])) {
 					$links[$label] = $this->generateLink ($label, $op, $item);
 				}
-				else if (!is_null ($user) && $user->hasPermission ($op['permissions'])) {
+				else if (!is_null ($user) && $user->hasPermissionTo ($op['permissions'])) {
 					$links[$label] = $this->generateLink ($label, $op, $item);
 				}
 			}
 			else if ($authorPermissionIsset && !is_null($item->author_id)) {
-				if (!is_null ($user) && $user->id == $item->author_id && $user->hasPermission ($op['author_permission'])) {
+				if (!is_null ($user) && $user->id == $item->author_id && $user->hasPermissionTo ($op['author_permission'])) {
 					$links[$label] = $this->generateLink ($label, $op, $item);
 				}
-				else if (!is_null ($user) && $user->hasPermission ($op['permissions'])) {
+				else if (!is_null ($user) && $user->hasPermissionTo ($op['permissions'])) {
 					$links[$label] = $this->generateLink ($label, $op, $item);
 				}
 			}
 			else if ($orPermissionIsset) {
-				if (!is_null ($user) && $user->hasPermission ($op['permissions'])) {
+				if (!is_null ($user) && $user->hasPermissionTo ($op['permissions'])) {
 					$links[$label] = $this->generateLink ($label, $op, $item);
 				}
 			}
@@ -417,17 +417,17 @@ abstract class Crud extends Component {
 		$vars = array_merge ($this->defaultTemplateVars(), $this->templateVars());
 		$user = auth()->user();
 		
-		if ($this->createPermissions() != '' && (!$user || !$user->hasPermission ($this->createPermissions()))) {
+		if ($this->createPermissions() != '' && (!$user || !$user->hasPermissionTo ($this->createPermissions()))) {
 			$vars['createForm'] = false;
 			$vars['createRoute'] = false;
 			$vars['useCreateModal'] = false;
 		}
-		if ($this->updatePermissions() != '' && (!$user || !$user->hasPermission ($this->updatePermissions()))) {
+		if ($this->updatePermissions() != '' && (!$user || !$user->hasPermissionTo ($this->updatePermissions()))) {
 			$vars['updateForm'] = false;
 			$vars['updateRoute'] = false;
 			$vars['useEditModal'] = false;
 		}
-		if ($this->deletePermissions() != '' && (!$user || !$user->hasPermission ($this->deletePermissions()))) {
+		if ($this->deletePermissions() != '' && (!$user || !$user->hasPermissionTo ($this->deletePermissions()))) {
 			$vars['deleteForm'] = false;
 			$vars['deleteRoute'] = false;
 			$vars['useDeleteModal'] = false;
@@ -537,7 +537,7 @@ abstract class Crud extends Component {
     public function createRoute () {
 	    
 	    $user = auth()->user();
-	    if ($this->createPermissions() != '' && (!$user || !$user->hasPermission ($this->createPermissions()))) {
+	    if ($this->createPermissions() != '' && (!$user || !$user->hasPermissionTo ($this->createPermissions()))) {
 			return false;
 		}
 		
